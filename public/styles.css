@@ -341,7 +341,7 @@ img {
 }
 
 .win-modal--welcome {
-  height: 500px;
+  height: 580px; /* bumped from 500px to fit the new 4th list item */
 }
 
 .win-modal__body--welcome {
