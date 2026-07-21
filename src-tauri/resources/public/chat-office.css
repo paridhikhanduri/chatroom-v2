@@ -1,0 +1,262 @@
+/* ==========================================================================
+   chat-room — chat-office.css
+   Office scenario's own layout, from Figma node 132:604. Deliberately
+   NOT shared with chat-romance — every class here is Office-specific.
+
+   IMPORTANT: unlike the onboarding screens, this view does NOT use the
+   shared fixed-1440x1024-canvas-then-scale system from styles.css — it
+   overrides position/size/transform below to be genuinely edge-to-edge
+   at whatever the real viewport size is. Every child element below is
+   positioned with that in mind (right/bottom-anchored instead of
+   assuming a fixed 1440px total width).
+   ========================================================================== */
+
+#view-chat-office {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  transform: none;
+  overflow: hidden;
+  border-radius: 8px 8px 0 8px; /* Figma: top-left, top-right, bottom-left rounded; bottom-right square */
+}
+
+.office-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/backgrounds/office-specific-background.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.2s ease;
+}
+
+.office-background.scenario-background--hidden {
+  opacity: 0;
+}
+
+/* ---------- header ---------- */
+
+.office-chat-header {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 40px;
+  background: #e4edf3;
+  border-bottom: 1px solid #d9e1e7;
+  z-index: 2;
+}
+
+.office-self-icon {
+  position: absolute;
+  right: 13px;
+  top: 5px;
+}
+
+/* ---------- sidebar ---------- */
+
+.office-sidebar {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  bottom: 0;
+  width: 386px;
+  display: flex;
+  z-index: 1;
+}
+
+.office-sidebar-rail {
+  position: relative;
+  width: 68px;
+  height: 100%;
+  background: #e4edf3;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.office-activity-indicator {
+  position: absolute;
+  left: 0;
+  top: 45px;
+  width: 2px;
+  height: 48px;
+  background: green;
+  border-radius: 0 20px 20px 0;
+}
+
+.office-bell-button {
+  position: absolute;
+  left: 17px;
+  top: 51px;
+  width: 24px;
+  height: 26px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default; /* static/decorative for now, per project scope */
+}
+
+.office-bell-icon {
+  display: block;
+  width: 24px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: url('assets/icons/bell-icon.png');
+}
+
+.office-sidebar-panel {
+  width: 318px;
+  height: 100%;
+  background: #f2f6f9;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- conversation header ---------- */
+
+.office-conversation-header {
+  position: absolute;
+  left: 386px;
+  right: 0;
+  top: 39px;
+  height: 60px;
+  border: 1px solid #f0f0f0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  z-index: 1;
+}
+
+.office-partner-name {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* ---------- message list ---------- */
+
+.office-message-list {
+  position: absolute;
+  left: 441px;
+  right: 54px; /* mirrors the composer's right margin below, instead of assuming a fixed 1440px total width */
+  top: 139px;
+  bottom: 105px; /* leaves room above the composer */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+/* Scoped to #view-chat-office: chat.js generates messages with these
+   exact class names regardless of which scenario is active, so each
+   scenario's own colors/spacing must be scoped by view — otherwise
+   whichever stylesheet loads last would win for every scenario. */
+
+#view-chat-office .chat-message {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 266px;
+}
+
+#view-chat-office .chat-message--incoming {
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+#view-chat-office .chat-message--outgoing {
+  align-items: flex-end;
+  align-self: flex-end;
+}
+
+#view-chat-office .chat-message__meta {
+  display: flex;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+#view-chat-office .chat-message--incoming .chat-message__name {
+  color: var(--color-text);
+}
+
+#view-chat-office .chat-message__time {
+  color: #424242;
+}
+
+#view-chat-office .chat-message__bubble {
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 7px 10px 6px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text);
+  max-width: 545px;
+}
+
+#view-chat-office .chat-message--incoming .chat-message__bubble {
+  padding-right: 25px;
+}
+
+#view-chat-office .chat-message--outgoing .chat-message__bubble {
+  padding-left: 25px;
+  text-align: right;
+}
+
+/* ---------- message composer ---------- */
+
+.office-message-composer {
+  position: absolute;
+  left: 442px;
+  right: 54px;
+  bottom: 40px;
+  height: 47px;
+  background: #fffffd;
+  border-radius: 4px;
+  box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.11);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  gap: 10px;
+  z-index: 1;
+}
+
+.office-message-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: #474740;
+}
+
+.office-message-input::placeholder {
+  color: #474740;
+  opacity: 1;
+}
+
+.office-send-button {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  background-image: url('assets/icons/send-button.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  padding: 0;
+  cursor: pointer;
+}

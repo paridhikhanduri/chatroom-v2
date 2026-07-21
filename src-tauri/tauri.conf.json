@@ -2,11 +2,12 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "chat-room-server",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.chatroom.app",
   "build": {
-    "frontendDist": "../../public/",
-    "devUrl": "0.0.0.0:3000",
-    "beforeDevCommand": "npm run start"
+    "frontendDist": "../public/",
+    "devUrl": "http://127.0.0.1:4141",
+    "beforeDevCommand": "npm run start",
+    "beforeBuildCommand": "npm run build:server-binary"
   },
   "app": {
     "windows": [
@@ -32,6 +33,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "externalBin": ["binaries/chatroom-server"],
+    "resources": ["resources/scenarios.json", "resources/public"],
+
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

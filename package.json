@@ -5,11 +5,15 @@
   "private": true,
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "tauri": "tauri",
+    "build:server-binary": "node ./scripts/build-server-binary.js",
+    "build:tauri:mac-universal": "cd src-tauri && cargo tauri build --target universal-apple-darwin --bundles app"
   },
   "dependencies": {
     "@tauri-apps/cli": "^2.11.4",
     "express": "^4.19.2",
+    "pkg": "^5.8.1",
     "socket.io": "^4.7.5"
   }
 }

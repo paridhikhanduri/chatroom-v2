@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>chat-room</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="chat-office.css" />
+<link rel="stylesheet" href="chat-romance.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       VIEW 1 — splash-screen
+       ============================================================ -->
+  <section id="view-splash" class="view view--active" data-view="splash" aria-label="Splash screen">
+    <div class="splash-title">
+      <p>quick chat?</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 2 — landing-page
+       ============================================================ -->
+  <section id="view-landing" class="view" data-view="landing" aria-label="Landing page">
+    <div class="decorative-icons" id="decorative-icons" aria-hidden="true"></div>
+
+    <div class="win-modal win-modal--welcome" role="dialog" aria-labelledby="welcome-title">
+      <div class="win-modal__titlebar">
+        <span class="win-modal__title" id="welcome-title">welcome</span>
+        <button class="win-close-btn" type="button" data-action="landing-close" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+      </div>
+
+      <div class="win-modal__body win-modal__body--welcome">
+        <div class="welcome-copy">
+          <p class="body-text">
+            in a world where large language models have become a daily assistant to writing our texts, emails, and other exchanges, how does this ai-mediation impact our interpersonal communication?
+          </p>
+          <p class="body-text">
+            <span class="link-text">chat-room</span> is part live action role-playing experience, part real-time chat app, part two-player game, and part social experiment.
+          </p>
+          <p class="body-text">how it works:</p>
+          <ol class="body-list">
+            <li>pair up: connect with a partner on the other side.</li>
+            <li>role play: enact out scenarios of either an office worker, a friend, or a romantic interest, navigating a specific task to communicate.</li>
+            <li>see where that leads you &amp; your conversation!</li>
+          </ol>
+        </div>
+      </div>
+
+      <button class="win-ok-btn" type="button" data-action="landing-ok">OK</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 3 — name-page
+       ============================================================ -->
+  <section id="view-name" class="view" data-view="name" aria-label="Enter your name">
+    <form class="win-modal win-modal--name" id="name-form" role="dialog" aria-labelledby="name-title">
+      <div class="win-modal__titlebar">
+        <span class="win-modal__title" id="name-title">your name...</span>
+        <button class="win-close-btn" type="button" data-action="name-close" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+      </div>
+
+      <div class="win-modal__body win-modal__body--name">
+        <label class="name-input" for="name-field">
+          <input
+            type="text"
+            id="name-field"
+            name="name"
+            class="name-input__field"
+            placeholder="type here"
+            autocomplete="off"
+            maxlength="24"
+          />
+        </label>
+      </div>
+
+      <button class="win-ok-btn" type="submit" data-action="name-ok">OK</button>
+    </form>
+  </section>
+
+  <!-- ============================================================
+       VIEW 4 — waiting-room
+       ============================================================ -->
+  <section id="view-waiting" class="view" data-view="waiting" aria-label="Waiting room">
+    <div class="win-modal win-modal--waiting" role="dialog" aria-labelledby="waiting-title">
+      <div class="win-modal__titlebar">
+        <span class="win-modal__title" id="waiting-title">waiting room</span>
+        <button class="win-close-btn" type="button" data-action="waiting-close" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+      </div>
+
+      <div class="win-modal__body win-modal__body--waiting">
+        <div class="player-card player-card--1">
+          <div class="player-presence">
+            <span class="icon icon-computer" aria-hidden="true"></span>
+            <span class="icon icon-player1" aria-hidden="true"></span>
+          </div>
+          <p class="player-label">hi there, <span class="underline-squiggle" id="player-name-display">player1 name</span>!</p>
+        </div>
+
+        <div class="player-card player-card--2">
+          <div class="player-presence">
+            <span class="icon icon-computer" aria-hidden="true"></span>
+            <span class="icon icon-player2" aria-hidden="true"></span>
+          </div>
+          <p class="player-label">waiting for, <span class="underline-squiggle">player 2 name</span>...</p>
+        </div>
+      </div>
+
+      <button class="win-ok-btn" type="button" data-action="waiting-ok">OK</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 5 — chat-office
+       Office scenario's own layout — intentionally NOT sharing markup
+       with chat-romance (or future chat-friendship). Shared behavior
+       (chat.js) hooks into this via data-role attributes only; every
+       class name here is Office-specific and free to differ from
+       Romance's.
+       ============================================================ -->
+  <section id="view-chat-office" class="view" data-view="chat-office" aria-label="Office scenario chat">
+    <div class="office-background" data-role="scenario-background" aria-hidden="true"></div>
+
+    <header class="office-chat-header">
+      <!-- logo-group is intentionally NOT duplicated here — the shared
+           #logo-overlay (below, outside all .view canvases) already
+           appears on every screen including this one. -->
+      <span class="icon icon-player1 office-self-icon" aria-hidden="true"></span>
+    </header>
+
+    <aside class="office-sidebar">
+      <div class="office-sidebar-rail">
+        <div class="office-activity-indicator" aria-hidden="true"></div>
+        <button class="office-bell-button" type="button" aria-label="Notifications" disabled>
+          <span class="office-bell-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="office-sidebar-panel" aria-hidden="true"></div>
+    </aside>
+
+    <div class="office-conversation-header">
+      <span class="icon icon-player2" aria-hidden="true"></span>
+      <span class="office-partner-name" data-role="partner-name">partner name</span>
+    </div>
+
+    <!-- Figma shows two separate example bubbles per side at fixed
+         decorative positions; here they're unified into one real
+         scrollable list (data-role="message-list") so chat.js has a
+         single place to append real messages into later — same visual
+         bubble styling, chronological flex layout instead of two
+         absolutely-positioned example groups. -->
+    <div class="office-message-list" data-role="message-list">
+      <div class="chat-message chat-message--outgoing" data-role="outgoing-chat-message">
+        <div class="chat-message__meta"><span class="chat-message__time">time</span></div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--incoming" data-role="incoming-chat-message">
+        <div class="chat-message__meta">
+          <span class="chat-message__name" data-role="partner-name-inline">[name of your partner]</span>
+          <span class="chat-message__time">time</span>
+        </div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--outgoing" data-role="outgoing-chat-message">
+        <div class="chat-message__meta"><span class="chat-message__time">time</span></div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--incoming" data-role="incoming-chat-message">
+        <div class="chat-message__meta">
+          <span class="chat-message__name" data-role="partner-name-inline">[name of your partner]</span>
+          <span class="chat-message__time">time</span>
+        </div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+    </div>
+
+    <form class="office-message-composer" data-role="message-composer">
+      <input
+        type="text"
+        class="office-message-input"
+        data-role="message-input"
+        placeholder="type a message"
+        autocomplete="off"
+      />
+      <!-- real send-button asset (Figma node 139:555) -->
+      <button type="submit" class="office-send-button" data-role="send-button" aria-label="Send message"></button>
+    </form>
+  </section>
+
+  <!-- ============================================================
+       VIEW 6 — chat-romance
+       Romance scenario's own layout — a narrow, centered chat column
+       (no sidebar), genuinely different from Office's full-width
+       dashboard. Every class here is Romance-specific; only the
+       data-role attributes are shared with chat.js.
+       ============================================================ -->
+  <section id="view-chat-romance" class="view" data-view="chat-romance" aria-label="Romance scenario chat">
+    <div class="romance-photo-background" data-role="scenario-background" aria-hidden="true"></div>
+    <div class="romance-decorative-icons" aria-hidden="true">
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 42.22vw); top: calc(50% - 16.81vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 42.22vw); top: calc(50% + 16.32vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 24.44vw); top: calc(50% + 26.67vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 37.99vw); top: calc(50% + 32.15vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 45.21vw); top: calc(50% + 29.93vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% + 47.43vw); top: calc(50% + 24.44vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 42.01vw); top: calc(50% - 16.81vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 42.01vw); top: calc(50% + 16.32vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 47.22vw); top: calc(50% + 24.44vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 45.0vw); top: calc(50% + 29.93vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 37.78vw); top: calc(50% + 32.15vw);"></span>
+      <span class="romance-icon romance-icon--exclamation" style="left: calc(50% - 24.24vw); top: calc(50% + 26.67vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 37.5vw); top: calc(50% + 19.1vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 33.19vw); top: calc(50% + 22.71vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 36.39vw); top: calc(50% + 27.85vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 32.08vw); top: calc(50% + 31.46vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 23.33vw); top: calc(50% + 15.9vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 17.78vw); top: calc(50% + 31.46vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 47.85vw); top: calc(50% + 33.96vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 37.99vw); top: calc(50% + 10.9vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 30.56vw); top: calc(50% + 5.42vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 39.1vw); top: calc(50% + 2.15vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 38.89vw); top: calc(50% + 2.15vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 30.35vw); top: calc(50% + 5.42vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 45.62vw); top: calc(50% - 6.25vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 46.6vw); top: calc(50% - 22.29vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 31.94vw); top: calc(50% - 22.29vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% + 35.69vw); top: calc(50% - 30.76vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 47.64vw); top: calc(50% + 33.96vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 31.87vw); top: calc(50% + 31.46vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 36.18vw); top: calc(50% + 27.85vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 32.99vw); top: calc(50% + 22.71vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 17.57vw); top: calc(50% + 31.46vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 23.12vw); top: calc(50% + 15.9vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 37.29vw); top: calc(50% + 19.1vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 37.78vw); top: calc(50% + 10.9vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 45.42vw); top: calc(50% - 6.25vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 31.74vw); top: calc(50% - 22.29vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 46.39vw); top: calc(50% - 22.29vw);"></span>
+      <span class="romance-icon romance-icon--heart" style="left: calc(50% - 35.49vw); top: calc(50% - 30.76vw);"></span>
+    </div>
+
+    <div class="romance-conversation-header">
+      <div class="romance-player2-info">
+        <span class="icon icon-player2 romance-player2-icon" aria-hidden="true"></span>
+        <div class="romance-player2-text">
+          <span class="romance-partner-name" data-role="partner-name">partner name</span>
+          <span class="romance-online-status">online</span>
+        </div>
+      </div>
+      <span class="romance-menu-icon" aria-hidden="true"></span>
+    </div>
+
+    <div class="romance-date-divider">
+      <span class="romance-date-divider__line"></span>
+      <span class="romance-date-divider__label">Today</span>
+      <span class="romance-date-divider__line"></span>
+    </div>
+
+    <div class="romance-message-list" data-role="message-list">
+      <div class="chat-message chat-message--outgoing" data-role="outgoing-chat-message">
+        <div class="chat-message__meta"><span class="chat-message__time">time</span></div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--incoming" data-role="incoming-chat-message">
+        <div class="chat-message__meta">
+          <span class="chat-message__name" data-role="partner-name-inline">[name of your partner]</span>
+          <span class="chat-message__time">time</span>
+        </div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--outgoing" data-role="outgoing-chat-message">
+        <div class="chat-message__meta"><span class="chat-message__time">time</span></div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+      <div class="chat-message chat-message--incoming" data-role="incoming-chat-message">
+        <div class="chat-message__meta">
+          <span class="chat-message__name" data-role="partner-name-inline">[name of your partner]</span>
+          <span class="chat-message__time">time</span>
+        </div>
+        <div class="chat-message__bubble">Hi, are you free for a quick chat?</div>
+      </div>
+    </div>
+
+    <form class="romance-message-composer" data-role="message-composer">
+      <input
+        type="text"
+        class="romance-message-input"
+        data-role="message-input"
+        placeholder="type a message"
+        autocomplete="off"
+      />
+      <button type="submit" class="romance-send-button" data-role="send-button" aria-label="Send message"></button>
+    </form>
+  </section>
+
+  <!-- ============================================================
+       Shared prompt-modal — ONE instance reused across every scenario,
+       overlaying whichever chat-* view is currently active. Reuses the
+       exact same .win-modal chrome as onboarding. Lives outside all
+       .view canvases (like #logo-overlay) so it isn't tied to any one
+       scenario's markup. Hidden by default; shown/populated by chat.js
+       when 'scenario:assigned' arrives.
+       ============================================================ -->
+  <div id="prompt-modal-overlay" class="prompt-modal-overlay" aria-hidden="true">
+    <div class="win-modal win-modal--prompt" role="dialog" aria-labelledby="prompt-modal-title" data-role="prompt-modal">
+      <div class="win-modal__titlebar">
+        <span class="win-modal__title" id="prompt-modal-title" data-role="prompt-modal-title">who are you?</span>
+        <button class="win-close-btn" type="button" data-action="prompt-modal-close" aria-label="Close">
+          <span aria-hidden="true">X</span>
+        </button>
+      </div>
+
+      <div class="win-modal__body win-modal__body--prompt">
+        <p class="prompt-role-label" data-role="prompt-role-label" hidden></p>
+        <div class="prompt-divider" data-role="prompt-divider" hidden></div>
+        <p class="prompt-text" data-role="prompt-text"></p>
+      </div>
+
+      <button class="win-ok-btn" type="button" data-action="prompt-modal-ok">OK</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Shared logo overlay — lives outside the scaled .view canvases so
+       "10px from top-left" is measured against the real viewport, not
+       the design canvas. Its own transform ties its size to
+       --stage-scale so it still visually scales with everything else.
+       ============================================================ -->
+  <header id="logo-overlay" class="logo-group" aria-label="Return to splash screen">
+    <span class="icon icon-logo" aria-hidden="true"></span>
+    <span class="logo-title" id="logo-title">chat-room</span>
+  </header>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="socket-client.js"></script>
+  <script src="chat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

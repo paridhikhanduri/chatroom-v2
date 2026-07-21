@@ -1,0 +1,578 @@
+/* ==========================================================================
+   chat-room — styles.css
+   Recreates the Figma file "chatroom-3.0":
+     - splash-screen   (node 3:2)
+     - landing-page    (node 75:526)
+     - name-page       (node 91:333)
+     - waiting-room    (node 98:522)
+   Design canvas: 1440 x 1024
+   ========================================================================== */
+
+/* ---------- fonts ---------- */
+@font-face {
+  font-family: 'Ac437 IBM PGC';
+  src: url('assets/fonts/Ac437_IBM_PGC.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Microsoft Sans Serif';
+  src: url('assets/fonts/micross.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- design tokens ---------- */
+:root {
+  /* colors — pulled directly from the Figma file */
+  --color-bg: #fffff6;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-modal-grey: #c3c7cb;
+  --color-bevel-shadow: #868a8e;
+  --color-titlebar: #474740;
+  --color-text: #000000;
+  --color-text-muted: #31312a;
+  --color-link: #000080;
+
+  /* fonts */
+  --font-display: 'Ac437 IBM PGC', 'Perfect DOS VGA 437', 'Consolas', monospace;
+  --font-body: 'Microsoft Sans Serif', 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+
+  /* design canvas (matches the Figma frame size) */
+  --canvas-w: 1440px;
+  --canvas-h: 1024px;
+
+  /* computed at runtime by app.js so the canvas always fits the viewport
+     with no scrolling, regardless of screen size */
+  --stage-scale: 1;
+}
+
+/* ---------- reset ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  height: 100dvh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+ol, ul, p {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: none;
+}
+
+/* ==========================================================================
+   view management
+   ========================================================================== */
+
+.view {
+  display: none;
+  position: relative;
+  width: var(--canvas-w);
+  height: var(--canvas-h);
+  flex-shrink: 0;
+  background: var(--color-bg);
+
+  /* app.js sets --stage-scale = min(viewportWidth/1440, viewportHeight/1024)
+     on load and on resize, so the full 1440x1024 canvas always fits inside
+     the viewport with no scrolling, in either direction. */
+  transform: scale(var(--stage-scale, 1));
+  transform-origin: center center;
+}
+
+.view--active {
+  display: block;
+}
+
+/* ==========================================================================
+   shared component: logo-group
+   ========================================================================== */
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Fixed to the true viewport corner (NOT inside a scaled .view), then
+   scaled from that same top-left point so it still visually tracks the
+   rest of the design at any --stage-scale. */
+#logo-overlay {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  transform: scale(var(--stage-scale, 1));
+  transform-origin: top left;
+  z-index: 100;
+  cursor: pointer;
+}
+
+/* Only the icon shows on splash — title hides via this class, toggled
+   by app.js based on the active view. */
+#logo-overlay.logo-overlay--icon-only .logo-title {
+  display: none;
+}
+
+.logo-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: normal;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   shared component: icons
+   Placeholder SVG-based icons — swap for exact Figma exports by dropping
+   files into assets/icons/ and updating the background-image url() below.
+   ========================================================================== */
+
+.icon {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  flex-shrink: 0;
+}
+
+.icon-logo {
+  width: 20px;
+  height: 20px;
+  background-image: url('assets/icons/logo-icon.png');
+}
+
+.icon-info {
+  width: 20px;
+  height: 20px;
+  opacity: 0.3;
+  background-image: url('assets/icons/info-icon.png');
+}
+
+.icon-computer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 67.539px;
+  height: 89.631px;
+  background-image: url('assets/icons/computer-icon.png');
+}
+
+.icon-player1 {
+  width: 25px;
+  height: 30px;
+  background-image: url('assets/icons/player1-icon.png');
+  position: relative;
+  z-index: 1;
+}
+
+.icon-player2 {
+  width: 25px;
+  height: 30px;
+  background-image: url('assets/icons/player2-icon.png');
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: darken;
+}
+
+/* ==========================================================================
+   VIEW 1 — splash-screen
+   ========================================================================== */
+
+#view-splash {
+  display: none;
+  cursor: pointer;
+}
+
+#view-splash.view--active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-title {
+  font-family: var(--font-display);
+  font-size: 200px;
+  line-height: normal;
+  color: var(--color-black);
+  text-align: center;
+  white-space: nowrap;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   shared component: win-modal (Win98-style window chrome)
+   ========================================================================== */
+
+.win-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 20px;
+
+  background: var(--color-modal-grey);
+  border-top: 1px solid var(--color-white);
+  border-left: 1px solid var(--color-white);
+  border-right: 1px solid var(--color-black);
+  border-bottom: 1px solid var(--color-black);
+  box-shadow:
+    inset -1px -1px 0 0 var(--color-bevel-shadow),
+    inset 1px 1px 0 0 var(--color-white);
+}
+
+.win-modal__titlebar {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-titlebar);
+  padding: 3px 5px 1px 10px;
+}
+
+.win-modal__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: normal;
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.win-close-btn {
+  position: relative;
+  width: 12px;
+  height: 11px;
+  padding: 0;
+  background: var(--color-modal-grey);
+  border-top: 1px solid var(--color-white);
+  border-left: 1px solid var(--color-white);
+  border-right: 1px solid var(--color-black);
+  border-bottom: 1px solid var(--color-black);
+  box-shadow:
+    inset -1px -1px 0 0 var(--color-bevel-shadow),
+    inset 1px 1px 0 0 var(--color-white);
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--color-black);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win-close-btn:active {
+  box-shadow:
+    inset 1px 1px 0 0 var(--color-bevel-shadow),
+    inset -1px -1px 0 0 var(--color-white);
+}
+
+.win-ok-btn {
+  flex-shrink: 0;
+  width: 70px;
+  height: 25px;
+  background: var(--color-modal-grey);
+  border-top: 2px solid var(--color-white);
+  border-left: 2px solid var(--color-white);
+  border-right: 1px solid var(--color-black);
+  border-bottom: 1px solid var(--color-black);
+  box-shadow:
+    inset -1px -1px 0 0 var(--color-bevel-shadow),
+    inset 1px 1px 0 0 var(--color-white);
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--color-black);
+}
+
+.win-ok-btn:active {
+  border-top: 2px solid var(--color-bevel-shadow);
+  border-left: 2px solid var(--color-bevel-shadow);
+  border-right: 1px solid var(--color-white);
+  border-bottom: 1px solid var(--color-white);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   VIEW 2 — landing-page
+   ========================================================================== */
+
+.decorative-icons {
+  position: absolute;
+  left: 62px;
+  top: 35px;
+  width: 1286px;
+  height: 978px;
+  pointer-events: none;
+}
+
+.decorative-icons .icon-info {
+  position: absolute;
+}
+
+.win-modal--welcome {
+  height: 500px;
+}
+
+.win-modal__body--welcome {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.welcome-copy {
+  width: 402px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.win-modal__body--welcome .body-text {
+  line-height: normal;
+}
+
+.win-modal__body--welcome .link-text {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--color-link);
+}
+
+.body-list {
+  padding-left: 1.5em;
+  margin: 0;
+}
+
+.body-list li {
+  margin-bottom: 4px;
+  line-height: normal;
+}
+
+/* ==========================================================================
+   VIEW 3 — name-page
+   ========================================================================== */
+
+.win-modal--name {
+  height: 284px;
+}
+
+.win-modal__body--name {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-input {
+  display: flex;
+  align-items: center;
+  width: 402px;
+  padding: 6px 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+  box-shadow:
+    inset 1px 1px 0 0 var(--color-bevel-shadow),
+    inset -1px -1px 0 0 var(--color-white);
+}
+
+.name-input__field {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--color-text-muted);
+  padding: 4px 0;
+}
+
+.name-input__field::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+/* custom validation state — set/cleared by app.js, no native browser popup */
+.name-input__field.is-invalid::placeholder {
+  color: #cc0000;
+}
+
+/* ==========================================================================
+   VIEW 4 — waiting-room
+   ========================================================================== */
+
+.win-modal--waiting {
+  height: 366px;
+}
+
+.win-modal__body--waiting {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+
+.player-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+}
+
+/* Asymmetric placement per Figma — card 1 sits further left and higher,
+   card 2 further right and lower, rather than centered/mirrored. */
+.player-card--1 {
+  left: 113px;
+  top: 60px;
+}
+
+.player-card--2 {
+  right: 69px;
+  top: 110px;
+}
+
+.player-presence {
+  position: relative;
+  width: 67.539px;
+  height: 89.631px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* derived from your redline screenshots: 17px top, 21.27px each side,
+     42.63px bottom — this asymmetric padding is what pushes the face
+     upward in the frame (17+42.63=59.63, leaving exactly 30px for the
+     30px-tall player icon; 21.27+21.27=42.54, leaving ~25px for its
+     25px width) rather than dead-centering it. */
+  padding: 17px 21.27px 42.63px;
+}
+
+.player-label {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--color-text);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.underline-squiggle {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: #000080;
+  text-decoration-thickness: 1px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 4px;
+}
+
+/* ==========================================================================
+   shared component: prompt-modal
+   ONE instance, reused across every chat-<scenario> view (Office,
+   Romance, and later Friendship) — same .win-modal chrome as onboarding.
+   Hidden by default; chat.js shows/populates it on 'scenario:assigned'.
+   Matches Figma's "role-card": role label (optional) + divider
+   (optional) + prompt text, inside the standard win-modal shell.
+   ========================================================================== */
+
+.prompt-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.prompt-modal-overlay--visible {
+  display: block;
+}
+
+.win-modal--prompt {
+  /* Auto-height instead of a fixed pixel value: Office's role-card is
+     403px tall, Romance's is 435px — rather than hardcoding a second
+     scenario-specific height, this sizes to whatever content chat.js
+     actually puts in it (role label + divider + prompt text, or just
+     prompt text when there's no role label). */
+  height: auto;
+  /* Lives outside the scaled .view canvas (see .prompt-modal-overlay),
+     so it needs its own copy of the same scale factor onboarding modals
+     get automatically — otherwise its text renders at true 1:1 pixels
+     instead of matching the rest of the UI's visual size. Combines
+     with the base .win-modal centering transform (translate) rather
+     than replacing it. */
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+}
+
+.win-modal__body--prompt {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+}
+
+.prompt-modal-copy {
+  width: 402px;
+}
+
+.prompt-role-label {
+  width: 402px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: normal;
+  color: #000e7a;
+  margin: 0 0 20px;
+}
+
+.prompt-divider {
+  width: 402px;
+  height: 2px;
+  margin: 0 0 20px;
+  background: var(--color-bevel-shadow);
+  border-bottom: 1px solid var(--color-white);
+}
+
+.prompt-text {
+  width: 402px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: normal;
+  color: var(--color-text);
+  margin: 0;
+}

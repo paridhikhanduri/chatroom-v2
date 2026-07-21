@@ -12,10 +12,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_PATH = path.join(__dirname, '..', 'data', 'scenarios.json');
+const DATA_PATH = process.env.CHATROOM_SCENARIOS_PATH || path.join(__dirname, '..', 'data', 'scenarios.json');
 
 function loadScenarios() {
-  const raw = fs.readFileSync(DATA_PATH, 'utf8');
+  const resolvedPath = path.resolve(DATA_PATH);
+  const raw = fs.readFileSync(resolvedPath, 'utf8');
   return JSON.parse(raw);
 }
 
