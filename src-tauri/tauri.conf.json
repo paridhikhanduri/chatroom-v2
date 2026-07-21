@@ -4,11 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.chatroom.app",
   "build": {
-    "frontendDist": "../public/",
-    "devUrl": "http://127.0.0.1:4141",
-    "beforeDevCommand": "npm run start",
-    "beforeBuildCommand": "npm run build:server-binary"
-  },
+  "frontendDist": "../public/",
+  "beforeBuildCommand": "npm run build:server-binary"
+},
   "app": {
     "windows": [
       {

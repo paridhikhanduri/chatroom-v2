@@ -17,6 +17,12 @@
        (rendered as incoming/outgoing bubbles) — plain relay, no AI
        mediation yet. That's Stage B, built server-side without any
        client changes needed here.
+     - Pending-send indicator: the instant the sender hits enter, a
+       placeholder "..." bubble appears in their own message list right
+       away (rather than nothing showing until the server round-trips
+       back), and is swapped for the real message once
+       'chat:message:outgoing' confirms it. Purely cosmetic — doesn't
+       change what's sent, what's mediated, or message ordering.
    ========================================================================== */
 
 (function () {
@@ -34,6 +40,12 @@
   let currentRoomId = null;
   let currentPartnerName = 'partner';
   let messagesCleared = false;
+
+  // FIFO queue of pending "..." bubbles waiting on the server's
+  // 'chat:message:outgoing' confirmation for the sender's own message.
+  // FIFO works because the server always echoes outgoing confirmations
+  // back in the same order messages were sent.
+  let pendingOutgoingQueue = [];
 
   function showPromptModal({ roleLabel, text }) {
     if (roleLabel) {
@@ -130,9 +142,73 @@
     list.scrollTop = list.scrollHeight;
   }
 
+  /**
+   * Appends a placeholder "..." bubble for a message the sender just hit
+   * send on, before the server has confirmed it. Cycles the dots so it
+   * visibly reads as "in progress" rather than a static, possibly-stuck
+   * "...". Returns the pieces resolvePendingOutgoing() needs later, or
+   * null if there's currently no active message list to append into.
+   */
+  function appendPendingOutgoing() {
+    const list = getActiveMessageList();
+    if (!list) return null;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'chat-message chat-message--outgoing chat-message--pending';
+    messageEl.setAttribute('data-role', 'outgoing-chat-message');
+
+    // Same meta row shape as a real outgoing message, just empty until
+    // resolvePendingOutgoing() fills in the confirmed time — outgoing
+    // messages never show a name, only incoming ones do.
+    const metaEl = document.createElement('div');
+    metaEl.className = 'chat-message__meta';
+
+    const bubbleEl = document.createElement('div');
+    bubbleEl.className = 'chat-message__bubble';
+    bubbleEl.textContent = '.';
+
+    messageEl.appendChild(metaEl);
+    messageEl.appendChild(bubbleEl);
+    list.appendChild(messageEl);
+    list.scrollTop = list.scrollHeight;
+
+    let dotCount = 1;
+    const intervalId = setInterval(() => {
+      dotCount = (dotCount % 3) + 1;
+      bubbleEl.textContent = '.'.repeat(dotCount);
+    }, 400);
+
+    return { messageEl, metaEl, bubbleEl, intervalId };
+  }
+
+  /** Stops a pending bubble's dot animation and turns it into the real,
+   *  confirmed outgoing message — same end result as appendMessage()
+   *  would have produced, just reusing the already-placed DOM node
+   *  instead of appending a second one. */
+  function resolvePendingOutgoing(pending, text, timestamp) {
+    clearInterval(pending.intervalId);
+    pending.bubbleEl.textContent = text;
+
+    const timeEl = document.createElement('span');
+    timeEl.className = 'chat-message__time';
+    timeEl.textContent = formatTime(timestamp);
+    pending.metaEl.appendChild(timeEl);
+
+    pending.messageEl.classList.remove('chat-message--pending');
+  }
+
   // Called from socket-client.js when 'chat:message:incoming'/
   // 'chat:message:outgoing' arrives.
   window.chatRoomReceiveMessage = function (direction, text, timestamp) {
+    // The sender's own message comes back as 'outgoing' — if we're
+    // still waiting on one (the common case), resolve the oldest
+    // pending bubble instead of appending a brand-new message.
+    if (direction === 'outgoing' && pendingOutgoingQueue.length) {
+      const pending = pendingOutgoingQueue.shift();
+      resolvePendingOutgoing(pending, text, timestamp);
+      return;
+    }
+
     appendMessage(direction, text, timestamp);
   };
 
@@ -162,13 +238,19 @@
       messagesCleared = true;
     }
 
+    // Fresh scenario entry — any bubble still waiting on a server
+    // confirmation belongs to a conversation that's over now, so drop
+    // it rather than let it resolve into the wrong chat later.
+    pendingOutgoingQueue.forEach((pending) => clearInterval(pending.intervalId));
+    pendingOutgoingQueue = [];
+
     if (partnerName) {
       document.querySelectorAll('[data-role="partner-name"]').forEach((el) => {
         el.textContent = partnerName;
       });
     }
 
-    promptModalTitle.textContent = 'who are you?';
+    promptModalTitle.textContent = "what's your role?";
     showPromptModal({ roleLabel, text });
   };
 
@@ -192,6 +274,12 @@
         console.warn('[chat-room] no socket connection — cannot send message');
         return;
       }
+
+      // Show the "..." placeholder immediately, before the server has
+      // even received this — this is what closes the visible gap
+      // between hitting enter and the message actually appearing.
+      const pending = appendPendingOutgoing();
+      if (pending) pendingOutgoingQueue.push(pending);
 
       window.chatRoomSocket.emit('chat:message', { roomId: currentRoomId, text });
       input.value = '';

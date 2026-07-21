@@ -30,7 +30,7 @@ const io = new Server(server, {
 
 // Serve the untouched front-end (index.html, styles.css, app.js, assets/)
 // exactly as it behaves when opened directly — no changes to any of it.
-app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(express.static(publicDir));
 
 app.get("/healthz", (req, res) => {
   res.json({ ok: true, service: "chatroom", port: PORT });

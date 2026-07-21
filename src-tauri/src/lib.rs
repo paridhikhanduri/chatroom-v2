@@ -20,9 +20,24 @@ pub fn run() {
                 )?;
             }
 
-            let resource_dir = app.path().resource_dir()?;
-            let scenarios = resource_dir.join("resources").join("scenarios.json");
-            let public = resource_dir.join("resources").join("public");
+            #[cfg(debug_assertions)]
+let (scenarios, public) = {
+    let manifest_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let project_root = manifest_dir.parent().unwrap().to_path_buf();
+    (
+        project_root.join("data").join("scenarios.json"),
+        project_root.join("public"),
+    )
+};
+
+#[cfg(not(debug_assertions))]
+let (scenarios, public) = {
+    let resource_dir = app.path().resource_dir()?;
+    (
+        resource_dir.join("resources").join("scenarios.json"),
+        resource_dir.join("resources").join("public"),
+    )
+};
 
             let (mut rx, child) = app
                 .shell()

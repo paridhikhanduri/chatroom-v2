@@ -10,6 +10,11 @@
     "build:server-binary": "node ./scripts/build-server-binary.js",
     "build:tauri:mac-universal": "cd src-tauri && cargo tauri build --target universal-apple-darwin --bundles app"
   },
+  "pkg": {
+    "assets": [
+      "node_modules/socket.io/client-dist/**/*"
+    ]
+  },
   "dependencies": {
     "@tauri-apps/cli": "^2.11.4",
     "express": "^4.19.2",

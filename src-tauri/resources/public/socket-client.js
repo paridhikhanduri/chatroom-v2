@@ -33,52 +33,19 @@
     );
   }
 
-  function getDiscoveryCandidates() {
-    const configuredUrl = getConfiguredServerUrl();
-    const candidates = new Set();
+function getDiscoveryCandidates() {
+  const configuredUrl = getConfiguredServerUrl();
+  const candidates = [];
 
-    const privatePrefixes = [
-      "192.168.1.",
-      "192.168.0.",
-      "10.0.0.",
-      "10.0.1.",
-      "172.16.0.",
-      "172.20.0.",
-    ];
-    const hostSuffixes = [
-      "1",
-      "10",
-      "20",
-      "30",
-      "50",
-      "100",
-      "101",
-      "102",
-      "110",
-      "111",
-      "112",
-      "113",
-      "120",
-      "150",
-      "200",
-    ];
-
-    privatePrefixes.forEach((prefix) => {
-      hostSuffixes.forEach((suffix) => {
-        candidates.add(`http://${prefix}${suffix}:${defaultPort}`);
-      });
-    });
-
-    if (window.location.origin && window.location.origin !== "null") {
-      candidates.add(window.location.origin);
-    }
-
-    candidates.add(configuredUrl);
-    candidates.add(`http://localhost:${defaultPort}`);
-    candidates.add(defaultServerUrl);
-
-    return Array.from(candidates);
+  if (window.location.origin && window.location.origin !== "null") {
+    candidates.push(window.location.origin);
   }
+  candidates.push(configuredUrl);
+  candidates.push(`http://localhost:${defaultPort}`);
+  candidates.push(defaultServerUrl);
+
+  return [...new Set(candidates)];
+}
 
   function fetchWithTimeout(url, timeoutMs = 700) {
     return new Promise((resolve, reject) => {
@@ -140,14 +107,15 @@
     // Called from app.js's submitName() right after the player's own card
     // is set locally — tells the server this player has arrived.
     window.chatRoomJoinWaitingRoom = function (name) {
-      if (!socketInstance.connected) {
-        console.warn(
-          "[chat-room] socket is not connected yet — waiting for the server",
-        );
-        return;
-      }
+  if (socketInstance.connected) {
+    socketInstance.emit("waiting-room:join", { name });
+  } else {
+    console.warn("[chat-room] socket not connected yet — will join once connected");
+    socketInstance.once("connect", () => {
       socketInstance.emit("waiting-room:join", { name });
-    };
+    });
+  }
+};
 
     // Confirms our own name back — belt-and-suspenders with app.js already
     // setting #player-name-display locally; harmless if it matches.

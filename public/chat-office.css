@@ -31,7 +31,15 @@
   background-position: center;
   opacity: 0.45;
   pointer-events: none;
-  z-index: 0;
+  /* Deliberately layered ABOVE every chat-UI element below (header,
+     sidebar, message list, composer are all z-index 1-2) so the
+     background is genuinely visible over the whole interface, not just
+     in the gaps those opaque panels leave — it's translucent (0.45
+     opacity) and pointer-events:none, so it's purely a visual overlay
+     and never blocks clicks to what's underneath. Still well below the
+     prompt-modal-overlay (z-index 200), which is the only thing meant
+     to sit on top of it. */
+  z-index: 5;
   transition: opacity 0.2s ease;
 }
 

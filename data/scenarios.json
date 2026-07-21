@@ -6,22 +6,22 @@
         "id": "office-1",
         "a": {
           "role": "employee",
-          "text": "You work a 9–5 job at a company with a strict leave policy. You need tomorrow off for a personal commitment. You believe you're entitled to take a day off when needed, but you're also conscious of making a good impression. Your goal is to ask your supervisor for leave while balancing confidence, professionalism, and politeness."
+          "text": "you work a 9–5 job at a company with a strict leave policy. you need tomorrow off for a personal commitment. you believe you're entitled to take a day off when needed, but you're also conscious of making a good impression. your goal is to ask your supervisor for leave while balancing confidence, professionalism, and politeness."
         },
         "b": {
           "role": "supervisor",
-          "text": "You are one of the youngest supervisors in your department. You've earned your position through hard work and an approachable personality. Your goal is to manage your team of employees while balancing your friendly nature with maintaining work standards and discipline."
+          "text": "you are one of the youngest supervisors in your department. you've earned your position through hard work and an approachable personality. your goal is to manage your team of employees while balancing your friendly nature with maintaining work standards and discipline."
         }
       },
       {
         "id": "office-2",
         "a": {
           "role": "employee",
-          "text": "You are 30 years old and have been working professionally for several years. Recently, someone at work ate your sandwich from the shared fridge. This might seem like a small issue, but you've been going through a difficult period in your personal life, including a divorce and losing your home. You believe either your supervisor may have eaten it, knows who did, or at least needs to be aware of what happened. You want to bring this up with them."
+          "text": "you are 30 years old and have been working professionally for several years. recently, someone at work ate your sandwich from the shared fridge. this might seem like a small issue, but you've been going through a difficult period in your personal life, including a divorce and losing your home. you believe either your supervisor may have eaten it, knows who did, or at least needs to be aware of what happened. you want to bring this up with them."
         },
         "b": {
           "role": "supervisor",
-          "text": "Recently, you've received concerns about one of your employee's behaviour, including angry messages, missed deadlines, and difficulty collaborating with colleagues. While others have raised concerns, you also recognize that this employee is usually not someone who causes problems in the workplace. You need to have a conversation with this employee to understand what has been happening.\n\n(Side note: Don't forget to bring your lunch tomorrow. You've recently been missing meals and have ended up eating food from the shared fridge when you're hungry.)"
+          "text": "recently, you've received concerns about one of your employee's behaviour, including angry messages, missed deadlines, and difficulty collaborating with colleagues. while others have raised concerns, you also recognize that this employee is usually not someone who causes problems in the workplace. you need to have a conversation with this employee to understand what has been happening.\n\n(side note: don't forget to bring your lunch tomorrow. you've recently been missing meals and have ended up eating food from the shared fridge when you're hungry.)"
         }
       }
     ]
@@ -33,22 +33,22 @@
         "id": "romance-1",
         "a": {
           "role": "romantic interest",
-          "text": "Earlier this year, you ended an 8-year relationship. After some time, you felt ready to start dating again, so you downloaded a dating app. Online dating feels unfamiliar to you. You usually spend a lot of time thinking about what to say, how to keep conversations going, and how to come up with good opening lines. Out of everyone you've matched with, one person really stands out. You're excited to see where things might go, so you put extra thought into every message you send."
+          "text": "earlier this year, you ended an 8-year relationship. after some time, you felt ready to start dating again, so you downloaded a dating app. online dating feels unfamiliar to you. you usually spend a lot of time thinking about what to say, how to keep conversations going, and how to come up with good opening lines. out of everyone you've matched with, one person really stands out. you're excited to see where things might go, so you put extra thought into every message you send."
         },
         "b": {
           "role": "romantic interest",
-          "text": "You've been using dating apps for a while and are comfortable meeting new people. You've enjoyed talking to different matches and have been on a couple of dates with this person. Although they seem nice, you don't feel any real chemistry, especially through your conversations. The two dates were pleasant but unremarkable, and you don't see the relationship going any further. Rather than ghosting them, you want to be kind and respectful, and send a thoughtful message explaining that you don't want to continue talking."
+          "text": "you've been using dating apps for a while and are comfortable meeting new people. you've enjoyed talking to different matches and have been on a couple of dates with this person. although they seem nice, you don't feel any real chemistry, especially through your conversations. the two dates were pleasant but unremarkable, and you don't see the relationship going any further. rather than ghosting them, you want to be kind and respectful, and send a thoughtful message explaining that you don't want to continue talking."
         }
       },
       {
         "id": "romance-2",
         "a": {
           "role": "romantic interest",
-          "text": "You know this person from high school. It's been a few years since then, but there's always been a bit of flirting between the two of you, originally rooted in the typical school rumours that you liked each other. You recently matched with them on a dating app. You're excited to reconnect, but you're not sure how to start or keep the conversation going without making things awkward."
+          "text": "you know this person from high school. it's been a few years since then, but there's always been a bit of flirting between the two of you, originally rooted in the typical school rumours that you liked each other. you recently matched with them on a dating app. you're excited to reconnect, but you're not sure how to start or keep the conversation going without making things awkward."
         },
         "b": {
           "role": "romantic interest",
-          "text": "You've recently reconnected with someone you've had a flirty history with since high school. You found out that their cat recently passed away. You want to acknowledge it and offer your condolences, even though you're not very close yet. At the same time, you hope to keep the conversation light, flirty, and continue getting to know them."
+          "text": "you've recently reconnected with someone you've had a flirty history with since high school. you found out that their cat recently passed away. you want to acknowledge it and offer your condolences, even though you're not very close yet. at the same time, you hope to keep the conversation light, flirty, and continue getting to know them."
         }
       }
     ]
