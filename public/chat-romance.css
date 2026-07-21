@@ -1,0 +1,329 @@
+/* ==========================================================================
+   chat-room â€” chat-romance.css
+   Romance scenario's own layout, from Figma node 250:1314. Deliberately
+   NOT shared with chat-office â€” every class here is Romance-specific,
+   and the layout paradigm is genuinely different (a narrow, centered
+   chat column, no sidebar) rather than just a re-themed copy of Office.
+
+   Like chat-office.css, this overrides the shared fixed-1440x1024-
+   canvas-then-scale system to be genuinely edge-to-edge at the real
+   viewport size. Unlike Office (which anchored elements to fixed
+   left/right pixel offsets), most of this design is expressed as
+   distance-from-center in the original Figma export, which is ported
+   here as `left: calc(50% + Npx)` â€” this has the nice property of
+   staying correctly centered as the real viewport width changes,
+   rather than drifting off-center the way a fixed left-edge anchor
+   would.
+   ========================================================================== */
+
+#view-chat-romance {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  transform: none;
+  overflow: hidden;
+
+  /* The soft red -> peach -> cream -> peach -> red wash from the
+     design. Figma's own export represents this via a fairly
+     convoluted rotated-SVG-with-embedded-gradient trick; this is a
+     deliberate simplification to a plain CSS conic-gradient producing
+     the identical visual result.
+
+     Confirmed directly from your Figma gradient panel: Angular type,
+     only 2 stops (50% #FFFFF6 cream, 100% #FE6361 red/pink â€” no 0%
+     stop). The key detail is the gradient's CENTER sits well below
+     the frame, not inside it â€” so the visible canvas only ever shows
+     a narrow angular slice near the "up" direction from that distant
+     center, which is what produces the soft off-canvas glow (cream
+     in the middle, pink creeping in at the edges/bottom) rather than
+     a straight directional fade. CSS conic-gradient's `at <position>`
+     supports a center point anywhere, including outside the element's
+     own box, so this is reproduced natively rather than approximated
+     with a plain top-to-bottom/left-to-right gradient. */
+  /* Radial, not conic/angular â€” a plain 2-stop conic sweep can't give
+     genuinely symmetric left/right coloring while also showing visible
+     pink (verified this by simulating actual frame coordinates; every
+     angle either mismatches left/right or pushes the whole frame into
+     one flat color zone). A radial gradient is symmetric by
+     construction and matches the described effect directly: a soft
+     glow radiating from a point below the canvas. */
+  background: radial-gradient(
+    circle at center 100vw,
+    #fe6361 20vw,
+    #fffff6 110vw
+  );
+}
+
+/* Both the photo background and decorative icons are wrapped together
+   in a fixed 1440x1024 reference canvas, scaled via the same
+   --stage-scale factor the rest of the app already computes (see
+   app.js). This is deliberately different from the functional UI
+   elements below (composer, message list, headers), which stay truly
+   edge-to-edge/responsive â€” only this decorative layer needs to match
+   Figma's exact proportions regardless of window size, since fixed
+   pixel offsets from center (matching Figma's raw numbers) would
+   otherwise push icons toward/past the real edges on any viewport
+   smaller than the 1440x1024 design canvas, and a plain cover-sized
+   background scales inconsistently depending on the actual window's
+   aspect ratio. */
+/* No wrapper/transform-scale here â€” that approach (an earlier attempt)
+   used a fixed 1440x1024 box scaled via --stage-scale, which caused
+   letterboxing gaps on wide monitors (the scaled box ends up narrower
+   than the real viewport whenever height is the limiting scale
+   factor). Using vw units directly instead scales proportionally to
+   viewport WIDTH with no wrapper needed and no possible gap â€” this
+   container is always genuinely 100% of the real viewport. */
+
+.romance-photo-background {
+  position: absolute;
+  left: 0;
+  top: -44.86vw; /* -646px at the 1440px reference width, scaled proportionally */
+  width: 100vw;
+  height: 177.43vw; /* 2555px at the 1440px reference width, scaled proportionally */
+  background-image: url('assets/backgrounds/romance-specific-background.png');
+  background-size: 100% 100%;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.2s ease;
+}
+
+.romance-photo-background.scenario-background--hidden {
+  opacity: 0;
+}
+
+/* ---------- decorative icons ---------- */
+
+.romance-decorative-icons {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.romance-icon {
+  position: absolute;
+  transform: translate(-50%, -50%) scaleX(-1);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.5;
+}
+
+.romance-icon--heart {
+  width: 1.39vw;
+  height: 1.39vw;
+  background-image: url('assets/icons/romance-page-heart-icon.png');
+}
+
+.romance-icon--exclamation {
+  width: 2.22vw;
+  height: 2.22vw;
+  background-image: url('assets/icons/romance-page-exclamation-icon.png');
+}
+
+/* ---------- conversation header ---------- */
+
+.romance-conversation-header {
+  position: absolute;
+  left: calc(50% + 3.5px);
+  top: 69px;
+  transform: translateX(-50%);
+  width: 300px; /* matches the date-divider's approximate total width below */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.romance-player2-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.romance-player2-icon {
+  flex-shrink: 0;
+}
+
+.romance-player2-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.romance-partner-name {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.romance-online-status {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.romance-menu-icon {
+  width: 30px;
+  height: 32px;
+  background-image: url('assets/icons/decorative-element.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* ---------- date divider ("Today") ---------- */
+
+.romance-date-divider {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: 143px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+}
+
+.romance-date-divider__line {
+  width: 125px;
+  height: 1px;
+  background: var(--color-bevel-shadow);
+}
+
+.romance-date-divider__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ---------- message list ----------
+   Figma shows two separate example bubble groups at fixed positions
+   (one for incoming, one for outgoing); as with Office, these are
+   unified into one real scrollable list (data-role="message-list") so
+   chat.js has a single place to append real messages into. */
+
+.romance-message-list {
+  position: absolute;
+  left: calc(50% - 153px);
+  top: 201px;
+  width: 305px;
+  bottom: 175px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+/* Scoped to #view-chat-romance: chat.js generates messages with the
+   same class names Office uses, so colors/spacing must be scoped by
+   view to avoid the two scenarios' styles colliding. */
+
+#view-chat-romance .chat-message {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 266px;
+}
+
+#view-chat-romance .chat-message--incoming {
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+#view-chat-romance .chat-message--outgoing {
+  align-items: flex-end;
+  align-self: flex-end;
+}
+
+#view-chat-romance .chat-message__meta {
+  display: flex;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+#view-chat-romance .chat-message--incoming .chat-message__name {
+  color: var(--color-text);
+}
+
+#view-chat-romance .chat-message__time {
+  color: #424242;
+}
+
+#view-chat-romance .chat-message__bubble {
+  border-radius: 4px;
+  padding: 7px 10px 6px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text);
+  max-width: 545px;
+}
+
+/* Romance's two message directions use different bubble colors,
+   unlike Office where both share the same grey. */
+#view-chat-romance .chat-message--incoming .chat-message__bubble {
+  background: #ffede5;
+  padding-right: 25px;
+}
+
+#view-chat-romance .chat-message--outgoing .chat-message__bubble {
+  background: #f5f5f5;
+  padding-left: 25px;
+  text-align: right;
+}
+
+/* ---------- message composer ---------- */
+
+.romance-message-composer {
+  position: absolute;
+  left: calc(50% - 0.5px);
+  bottom: 116px;
+  transform: translateX(-50%);
+  width: 305px;
+  height: 43px;
+  background: #fffffd;
+  border-radius: 4px;
+  box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.11);
+  display: flex;
+  align-items: center;
+  padding: 0 19px;
+  gap: 10px;
+  z-index: 2;
+}
+
+.romance-message-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: #474740;
+}
+
+.romance-message-input::placeholder {
+  color: #474740;
+  opacity: 1;
+}
+
+.romance-send-button {
+  flex-shrink: 0;
+  width: 16.355px;
+  height: 16.132px;
+  border: none;
+  background-color: transparent;
+  background-image: url('assets/icons/send-button.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  padding: 0;
+  cursor: pointer;
+}
